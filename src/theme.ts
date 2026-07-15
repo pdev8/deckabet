@@ -1,0 +1,19 @@
+// LETTERFALL dark card-room theme.
+export const C = {
+  bg: '#0f1216',
+  surface: '#151a20',
+  surfaceHi: '#1b2129',
+  border: '#2a2f36',
+  borderSoft: '#22272e',
+  ink: '#e9e5db',
+  inkMuted: '#8b93a0',
+  inkFaint: '#5c6470',
+  accent: '#3ddc84',
+  accentDim: 'rgba(61,220,132,0.45)',
+  accentFaint: 'rgba(61,220,132,0.16)',
+  card: '#f2ead9',
+  cardEdge: '#d9cfb8',
+  cardInk: '#26241e',
+  cardInkSoft: 'rgba(38,36,30,0.45)',
+  scrim: 'rgba(10,12,15,0.92)',
+} as const;
