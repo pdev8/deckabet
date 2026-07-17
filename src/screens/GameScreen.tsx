@@ -11,7 +11,15 @@ import {
   useWindowDimensions,
 } from 'react-native';
 
-import { clearGame, loadGame, loadStats, saveGame, saveStats } from '../appStorage';
+import {
+  clearGame,
+  loadGame,
+  loadHistory,
+  loadStats,
+  saveGame,
+  saveHistory,
+  saveStats,
+} from '../appStorage';
 import BigButton from '../components/BigButton';
 import CardBack from '../components/CardBack';
 import LetterCard from '../components/LetterCard';
@@ -27,6 +35,7 @@ import {
   reducer,
   tableauCount,
 } from '../game';
+import { makeRecord, recordGame, type GameRecord, type HistoryState } from '../history';
 import { dealScore, stockEconomyMult, wordEconomyMult, wordScore } from '../scoring';
 import { recordDeal, type DealRecord, type LifetimeStats } from '../stats';
 import { C } from '../theme';
@@ -114,6 +123,22 @@ export default function GameScreen() {
     saveStats(lifetimeRef.current).catch(() => {}); // storage never crashes the game
   }, []);
 
+  // ---------------- game history + personal bests (DB-123)
+  // Same shape as the lifetime layer: null until loadHistory resolves;
+  // records finishing before then queue up and fold in on load. Surfaced in
+  // DB-144's history view — no UI here yet.
+  const historyRef = useRef<HistoryState | null>(null);
+  const pendingGamesRef = useRef<GameRecord[]>([]);
+
+  const recordHistoryGame = useCallback((record: GameRecord) => {
+    if (historyRef.current === null) {
+      pendingGamesRef.current.push(record);
+      return;
+    }
+    historyRef.current = recordGame(historyRef.current, record);
+    saveHistory(historyRef.current).catch(() => {}); // storage never crashes the game
+  }, []);
+
   useEffect(() => {
     dealStartRef.current = Date.now(); // the first deal's clock starts at mount
     loadStats().then((loaded) => {
@@ -123,6 +148,15 @@ export default function GameScreen() {
       if (pendingDealsRef.current.length > 0) {
         pendingDealsRef.current = [];
         saveStats(s).catch(() => {});
+      }
+    });
+    loadHistory().then((loaded) => {
+      let h = loaded;
+      for (const r of pendingGamesRef.current) h = recordGame(h, r);
+      historyRef.current = h;
+      if (pendingGamesRef.current.length > 0) {
+        pendingGamesRef.current = [];
+        saveHistory(h).catch(() => {});
       }
     });
     // Resume a killed-mid-deal game (DB-122). The board may swap a few ms
@@ -154,15 +188,28 @@ export default function GameScreen() {
   const prevWonRef = useRef(state.won);
   useEffect(() => {
     if (state.won && !prevWonRef.current) {
+      const durationMs = Date.now() - dealStartRef.current;
       recordLifetimeDeal({
         won: true,
-        durationMs: Date.now() - dealStartRef.current,
+        durationMs,
         words: state.played,
         dealScore: wonScore,
       });
+      // Difficulty presets land in DB-131; everything records casual/free.
+      recordHistoryGame(
+        makeRecord({
+          mode: 'free',
+          difficulty: 'casual',
+          won: true,
+          durationMs,
+          words: state.played,
+          dealScore: wonScore,
+          at: Date.now(),
+        }),
+      );
     }
     prevWonRef.current = state.won;
-  }, [state.won, state.played, wonScore, recordLifetimeDeal]);
+  }, [state.won, state.played, wonScore, recordLifetimeDeal, recordHistoryGame]);
 
   // ---------------- layout metrics
   const pad = 12;
@@ -423,12 +470,24 @@ export default function GameScreen() {
     // counts-as-played rule. Words played so far still count (spec §5);
     // losses bank no points. Wins were already recorded by the win effect.
     if (!state.won && state.movesMade > 0) {
+      const durationMs = Date.now() - dealStartRef.current;
       recordLifetimeDeal({
         won: false,
-        durationMs: Date.now() - dealStartRef.current,
+        durationMs,
         words: state.played,
         dealScore: 0,
       });
+      recordHistoryGame(
+        makeRecord({
+          mode: 'free',
+          difficulty: 'casual',
+          won: false,
+          durationMs,
+          words: state.played,
+          dealScore: 0, // losses bank nothing
+          at: Date.now(),
+        }),
+      );
     }
     dispatch({ type: 'redeal' });
     dealStartRef.current = Date.now(); // the new deal's clock starts now
