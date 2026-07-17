@@ -173,7 +173,7 @@
     <div class="statrow">
       <div class="stat"><div class="v green">✓</div><div class="k">core loop playable</div></div>
       <div class="stat"><div class="v green">✓</div><div class="k">design specced</div></div>
-      <div class="stat"><div class="v">21 / 56</div><div class="k">tickets shipped</div></div>
+      <div class="stat"><div class="v">29 / 56</div><div class="k">tickets shipped</div></div>
       <div class="stat"><div class="v orange">DB-172</div><div class="k">in review</div></div>
       <div class="stat"><div class="v">34 + 1</div><div class="k">PRs merged + open</div></div>
     </div>
@@ -185,8 +185,8 @@
       <div class="step done"><div class="s-mark">✓ DONE</div><div class="s-name">Core loop</div><div class="s-sub">Playable game, 290 verified deals, drag &amp; park UX</div></div>
       <div class="step done"><div class="s-mark">✓ DONE</div><div class="s-name">Design</div><div class="s-sub">Scoring, Living Deck, modes, ladder, endgame fix — all specced</div></div>
       <div class="step done"><div class="s-mark">✓ DONE</div><div class="s-name">M1 Scored</div><div class="s-sub">Tests, CI, scoring engine, win tally</div></div>
-      <div class="step now"><div class="s-mark">● NOW</div><div class="s-name">Build M2</div><div class="s-sub">Persistence, settings, difficulty</div></div>
-      <div class="step future"><div class="s-mark">M3</div><div class="s-name">Social</div><div class="s-sub">Living Deck, daily set, leaderboards, badges</div></div>
+      <div class="step done"><div class="s-mark">✓ DONE</div><div class="s-name">M2 Sticky</div><div class="s-sub">Persistence, dictionary, settings, difficulty</div></div>
+      <div class="step now"><div class="s-mark">● NOW</div><div class="s-name">Build M3</div><div class="s-sub">Living Deck ✓ core; daily screen, leaderboards, badges</div></div>
       <div class="step future"><div class="s-mark">M4</div><div class="s-name">Shipped</div><div class="s-sub">Polish, review, App Store</div></div>
       <div class="step future"><div class="s-mark">M5</div><div class="s-name">Alive</div><div class="s-sub">Word ladder, server validation</div></div>
     </div>
@@ -343,15 +343,15 @@
     </div>
 
     <div class="epic">
-      <div class="epic-head"><span class="e-id">E3</span><span class="e-name">Settings &amp; Difficulty</span><span class="e-count">0/4</span><span class="e-mile">M2</span></div>
+      <div class="epic-head"><span class="e-id">E3</span><span class="e-name">Settings &amp; Difficulty</span><span class="e-count">3/4</span><span class="e-mile">M2</span></div>
       <details class="trow-d">
-        <summary class="trow"><span class="t-id">DB-130</span><span class="t-name">Settings screen + persisted store <span class="t-note">(PR #35 — 13 tests)</span></span><span class="t-size">S</span><span class="st open">in review</span></summary>
+        <summary class="trow"><span class="t-id">DB-130</span><span class="t-name">Settings screen + persisted store <span class="t-note">(PR #35 — 13 tests)</span></span><span class="t-size">S</span><span class="st done">done</span></summary>
         <div class="t-body">
           <p>A settings screen behind a gear icon, with choices that persist between sessions. It's the home for difficulty, sound, and accessibility options.</p>
         </div>
       </details>
       <details class="trow-d">
-        <summary class="trow"><span class="t-id">DB-131</span><span class="t-name">Difficulty configurations <span class="t-note">(PR #37 — knobs, ×1.0–×1.4)</span></span><span class="t-size">M</span><span class="st open">in review</span></summary>
+        <summary class="trow"><span class="t-id">DB-131</span><span class="t-name">Difficulty configurations <span class="t-note">(PR #37 — knobs, ×1.0–×1.4)</span></span><span class="t-size">M</span><span class="st done">done</span></summary>
         <div class="t-body">
           <p>Pick your challenge level: harder presets allow fewer recycles and park bays but multiply your score in return. Changes take effect on your next deal, never mid-game.</p>
         </div>
@@ -371,7 +371,7 @@
     </div>
 
     <div class="epic">
-      <div class="epic-head"><span class="e-id">E7</span><span class="e-name">The Living Deck ★ core</span><span class="e-count">0/9</span><span class="e-mile">M3</span></div>
+      <div class="epic-head"><span class="e-id">E7</span><span class="e-name">The Living Deck ★ core</span><span class="e-count">8/9</span><span class="e-mile">M3</span></div>
       <details class="trow-d">
         <summary class="trow"><span class="t-id">DB-186</span><span class="t-name">Backend foundation on Supabase <span class="t-note">(seeds, submissions, move logs, usage aggregates; anon auth + RLS)</span></span><span class="t-size">L</span><span class="st post">post-launch</span></summary>
         <div class="t-body">
@@ -385,7 +385,7 @@
         </div>
       </details>
       <details class="trow-d">
-        <summary class="trow"><span class="t-id">DB-170</span><span class="t-name">On-device seeded generator: board shapes, distribution + altitude guards, openness</span><span class="t-size">M</span><span class="st next">next</span></summary>
+        <summary class="trow"><span class="t-id">DB-170</span><span class="t-name">On-device seeded generator: board shapes, distribution + altitude guards, openness</span><span class="t-size">M</span><span class="st done">done</span></summary>
         <div class="t-body">
           <p>The deal generator moves onto your phone: from a seed it builds a board that starts with a proven winning line, guards the letter mix (no duplicate floods, rare letters surface early, vowel-friendly column bottoms), and rejects boards that don't offer plenty of playable words. Same seed always produces the same deal — that's what makes shared daily games possible.</p>
         </div>
@@ -403,25 +403,25 @@
         </div>
       </details>
       <details class="trow-d">
-        <summary class="trow"><span class="t-id">DB-173</span><span class="t-name">Difficulty ramp: shape + generosity + recycles + max-parked per game 1–5</span><span class="t-size">M</span><span class="st open">in review</span></summary>
+        <summary class="trow"><span class="t-id">DB-173</span><span class="t-name">Difficulty ramp: shape + generosity + recycles + max-parked per game 1–5</span><span class="t-size">M</span><span class="st done">done</span></summary>
         <div class="t-body">
           <p>The daily set's difficulty dial: across games 1–5, board shape steepens, draw generosity tightens, and recycles and parking shrink — so game 1 is a warm-up and game 5 is the test. Also decides the daily-set score multiplier.</p>
         </div>
       </details>
       <details class="trow-d">
-        <summary class="trow"><span class="t-id">DB-174</span><span class="t-name">Daily set mode — 5 scored games, shared seeds, daily total, countdown</span><span class="t-size">M</span><span class="st open">in review</span></summary>
+        <summary class="trow"><span class="t-id">DB-174</span><span class="t-name">Daily set mode — 5 scored games, shared seeds, daily total, countdown</span><span class="t-size">M</span><span class="st open">engine done</span></summary>
         <div class="t-body">
           <p>The scored mode: five games a day, the same deals for every player, adding up to one daily total with a reset countdown. Scarcity makes the total mean something; free play stays unlimited and unscored.</p>
         </div>
       </details>
       <details class="trow-d">
-        <summary class="trow"><span class="t-id">DB-175</span><span class="t-name">Par estimation + score bands</span><span class="t-size">M</span><span class="st open">engine done</span></summary>
+        <summary class="trow"><span class="t-id">DB-175</span><span class="t-name">Par estimation + score bands</span><span class="t-size">M</span><span class="st done">done</span></summary>
         <div class="t-body">
           <p>The generator estimates what score each deal realistically supports (its par) and rejects deals outside a target band. That keeps deal luck off the leaderboard — daily totals compare skill, not shuffle fortune.</p>
         </div>
       </details>
       <details class="trow-d">
-        <summary class="trow"><span class="t-id">DB-176</span><span class="t-name">Seed service: local hash now, server-issued + replay validation designed</span><span class="t-size">M</span><span class="st open">in review</span></summary>
+        <summary class="trow"><span class="t-id">DB-176</span><span class="t-name">Seed service: local hash now, server-issued + replay validation designed</span><span class="t-size">M</span><span class="st done">done</span></summary>
         <div class="t-body">
           <p>How scored games get their seeds: at launch they're derived on the device from the date, so everyone plays the same set. The phase-2 design — server-issued seeds plus move-log replay validation, the real anti-cheat — is documented here and built later on DB-186.</p>
         </div>
@@ -674,6 +674,14 @@
       <div class="pr"><span class="p-id">#28</span><a href="https://github.com/pdev8/deckabet/pull/28">[24. docs] E9 wildcards ticket</a><span style="margin-left:auto"><span class="st open">open</span></span></div>
       <div class="pr"><span class="p-id">#29</span><a href="https://github.com/pdev8/deckabet/pull/29">[25. E10] DB-201: lexicon build pipeline</a><span style="margin-left:auto"><span class="st open">open</span></span></div>
     <div class="pr"><span class="p-id">#39</span><span>[39. fix] Settings back button clears the Dynamic Island (safe-area)</span><span style="margin-left:auto"><span class="st open">open</span></span></div>
+      <div class="pr"><span class="p-id">#40</span><span>[1. E7] DB-177: dynamic bays</span><span style="margin-left:auto"><span class="st done">done</span></span></div>
+      <div class="pr"><span class="p-id">#41</span><span>[2. E7] DB-170: seeded deal generator</span><span style="margin-left:auto"><span class="st done">done</span></span></div>
+      <div class="pr"><span class="p-id">#42</span><span>[3. E7] DB-171: solvability solver</span><span style="margin-left:auto"><span class="st done">done</span></span></div>
+      <div class="pr"><span class="p-id">#43</span><span>[4. E7] DB-172: draw-time steering</span><span style="margin-left:auto"><span class="st done">done</span></span></div>
+      <div class="pr"><span class="p-id">#44</span><span>[5. E7] DB-173: difficulty ramp</span><span style="margin-left:auto"><span class="st done">done</span></span></div>
+      <div class="pr"><span class="p-id">#45</span><span>[6. E7] DB-176: seed service</span><span style="margin-left:auto"><span class="st done">done</span></span></div>
+      <div class="pr"><span class="p-id">#46</span><span>[7. E7] DB-175: par estimation + bands</span><span style="margin-left:auto"><span class="st done">done</span></span></div>
+      <div class="pr"><span class="p-id">#47</span><span>[8. E7] DB-174: daily-set engine</span><span style="margin-left:auto"><span class="st done">done</span></span></div>
       </div>
   </section>
 

@@ -59,6 +59,21 @@ describe('storage core', () => {
     expect(await store.get('b', 'fb')).toBe('fb');
   });
 
+  it('a pre-bump v1 envelope (old shape) falls back instead of loading a stale shape', async () => {
+    // Regression: DB-131 reshaped history/stats without a version bump, so old
+    // v1 data loaded with the wrong shape and crashed ("cannot read property
+    // score"). Bumping SCHEMA_VERSION to 2 makes any v1 blob fall back.
+    expect(SCHEMA_VERSION).toBeGreaterThanOrEqual(2);
+    const { kv } = memoryKV({
+      gameHistory: JSON.stringify({ v: 1, data: { games: [], bests: { casual: {} } } }),
+    });
+    const store = createStore(kv);
+    expect(await store.get('gameHistory', { games: [], bests: null })).toEqual({
+      games: [],
+      bests: null,
+    });
+  });
+
   it('remove deletes the key', async () => {
     const { kv, m } = memoryKV();
     const store = createStore(kv);

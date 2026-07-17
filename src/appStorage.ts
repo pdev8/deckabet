@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { dailySetForDay, type DailySet } from './daily';
 import { parseSavedGame, type SavedGame } from './game';
-import { emptyHistory, type HistoryState } from './history';
+import { sanitizeHistory, type HistoryState } from './history';
 import type { MissedWords } from './missedWords';
 import { playDayOf } from './seedService';
 import { sanitizeSettings, type Settings } from './settings';
@@ -88,9 +88,13 @@ export function saveSettings(s: Settings): Promise<void> {
 
 export const HISTORY_KEY = 'gameHistory';
 
-/** Missing/corrupt data resolves to empty history — storage never crashes the game. */
-export function loadHistory(): Promise<HistoryState> {
-  return store.get(HISTORY_KEY, emptyHistory());
+/**
+ * Missing/corrupt/old-shape data resolves to empty history — storage never
+ * crashes the game. Sanitized on load (not just version-gated) so a future
+ * shape change can never surface a stale bests bucket to the recorder.
+ */
+export async function loadHistory(): Promise<HistoryState> {
+  return sanitizeHistory(await store.get<unknown>(HISTORY_KEY, null));
 }
 
 export function saveHistory(h: HistoryState): Promise<void> {
