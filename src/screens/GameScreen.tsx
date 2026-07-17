@@ -11,6 +11,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   clearGame,
@@ -47,6 +48,7 @@ export default function GameScreen({
   onOpenSettings?: () => void;
 } = {}) {
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets(); // clears the notch / Dynamic Island / home bar
   const settings = useSettings(); // live: haptics / sound / reduce-motion / config
   const reduceMotion = settings.reduceMotion;
   // Mirror for stable callbacks that fire haptics without re-subscribing.
@@ -585,7 +587,12 @@ export default function GameScreen({
   // ---------------- render
   return (
     <View style={{ flex: 1 }}>
-      <View style={styles.root}>
+      <View
+        style={[
+          styles.root,
+          { paddingTop: insets.top + 8, paddingBottom: insets.bottom + 10 },
+        ]}
+      >
         {/* top bar */}
         <View style={styles.topBar}>
           <Text style={styles.wordmark}>DECKABET</Text>
@@ -947,8 +954,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     paddingHorizontal: 12,
-    paddingTop: 8,
-    paddingBottom: 10,
+    // vertical padding is applied inline with safe-area insets
   },
 
   // top bar
