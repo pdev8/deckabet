@@ -41,8 +41,15 @@ ship a change that can break it.
   scoring, difficulty, leaderboards, achievements). `docs/GENERATION.md` is
   the canonical core-game design ("Living Deck"). If code and docs disagree,
   docs win — or PR a doc change.
-- `docs/roadmap.html` mirrors ROADMAP.md and is republished as a Claude
-  artifact whenever the roadmap changes; keep all three in sync in the same PR.
+- **The tracker is always current — the user never has to ask.**
+  `docs/roadmap.html` is the live project tracker. Every working PR also
+  updates it *in the same PR*: the ticket's status chip (todo → in review
+  when the PR opens → done when merged), the PR log row, and the header
+  stat counts — then the artifact is republished immediately, so the
+  tracker URL reflects reality at any moment. At the start of any session,
+  reconcile tracker statuses with actual PR states (things merged since the
+  last update) before starting new work. The tracker mirrors ROADMAP.md for
+  specs; keep both in sync in the same PR.
 
 ## Architecture
 
