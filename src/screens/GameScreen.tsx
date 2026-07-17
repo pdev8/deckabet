@@ -34,7 +34,7 @@ import { existsPlayableWord, isValidWord } from '../dict';
 import { hapticFor, type FeedbackKind } from '../feedback';
 import { MAX_WORD, makeDealState, parkedCount, randomDealIndex, reducer, tableauCount } from '../game';
 import { makeRecord, recordGame, type GameRecord, type HistoryState } from '../history';
-import { recordMiss, topMisses, type MissedWords } from '../missedWords';
+import { recordMiss, type MissedWords } from '../missedWords';
 import { dealScore, stockEconomyMult, wordEconomyMult, wordScore } from '../scoring';
 import { useSettings } from '../settingsStore';
 import { recordDeal, type DealRecord, type LifetimeStats } from '../stats';
@@ -209,7 +209,6 @@ export default function GameScreen({
         pendingMissesRef.current = [];
         saveMissedWords(m).catch(() => {});
       }
-      if (__DEV__) console.log('[missed-words] top:', topMisses(loaded, 10));
     });
     loadHistory().then((loaded) => {
       let h = loaded;

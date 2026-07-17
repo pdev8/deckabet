@@ -8,7 +8,12 @@ export interface KV {
   removeItem(key: string): Promise<void>;
 }
 
-export const SCHEMA_VERSION = 1;
+// Bump this when any persisted value's SHAPE changes without a migration:
+// old-version envelopes then fail the version check and fall back to defaults
+// instead of loading a stale shape and crashing. (v1→v2: DB-131 reshaped
+// lifetime stats + game history; no migration pre-launch, so stored data
+// resets.) Post-launch shape changes must ship a real migration, not a bump.
+export const SCHEMA_VERSION = 2;
 
 /** Upgrades `data` written at `fromVersion` to the current schema. */
 export type Migration = (data: unknown, fromVersion: number) => unknown;
