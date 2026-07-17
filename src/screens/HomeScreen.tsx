@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import BigButton from '../components/BigButton';
-import LetterRain from '../components/LetterRain';
+import HangingCards from '../components/HangingCards';
 import PopIn from '../components/PopIn';
 import { useSettings } from '../settingsStore';
 import { C } from '../theme';
@@ -26,7 +26,7 @@ export default function HomeScreen({
 
   return (
     <View style={styles.root}>
-      <LetterRain reduceMotion={reduceMotion} />
+      <HangingCards reduceMotion={reduceMotion} />
 
       <View style={[styles.content, { paddingTop: insets.top + 8, paddingBottom: insets.bottom + 16 }]}>
         <Pressable
