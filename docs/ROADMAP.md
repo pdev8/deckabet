@@ -81,6 +81,32 @@ misses surface instead of silently frustrating players.*
 | DB-202 | Regenerate deals + witnesses on the new lexicon | S | `generate-deals` runs against the new lexicon; witness-replay + schema tests green; sim spot-check (win rates, openness) reported in the PR |
 | DB-203 | Missed-word feedback loop | S | Valid-looking words the player attempts that the lexicon rejects are logged locally; top misses inspectable in dev; export documented (Supabase sync arrives with DB-186) |
 
+### DB-200 decision record (2026-07-18)
+
+**Validity lexicon: ENABLE2k (`enable1.txt`) — public domain.** 172k words,
+the de facto standard for digital word games (it is Words With Friends'
+official dictionary), placed in the public domain by Alan Beale — zero
+licensing burden for App Store distribution. Filtered to 3–8 letters minus a
+curated offensive-word exclusion list, this replaces today's 18,884-word seed
+lexicon (~7× more words), which is the fix for legitimate words being
+rejected in play.
+
+**Commonality metadata: joined from a public word-frequency list** (Norvig
+count_1w / wordfreq-class source, pinned by URL + checksum in the build
+script). Each lexicon word gets a frequency tier; E7's steering/openness and
+E8's retirement pool both consume it.
+
+**Rejected:** NASPA/Collins tournament lists (licensed, unusable);
+EOWL/UKACD (requires verbatim copyright text in the product; smaller than
+ENABLE); SCOWL as the validity base (permissive but notice-bearing, and its
+band structure is better used as optional metadata than as the source of
+truth).
+
+**Risks accepted:** ENABLE is US-flavored (some UK spellings absent) and
+static (no new coinages since 2000) — DB-203's missed-word loop plus a small
+committed `additions.txt`/`removals.txt` overlay in the pipeline handles
+both over time.
+
 ## Epic E3 — Settings & Difficulty
 
 | ID | Ticket | Size | Acceptance criteria |
