@@ -406,6 +406,9 @@ export default function GameScreen({
   const [returningReserve, setReturningReserve] = useState(false);
   const draggingRef = useRef(false);
   const dragXY = useRef(new Animated.ValueXY()).current;
+  // Hides the reserve card for the beat between committing a park and the next
+  // queued card rendering, so the consumed card never flashes back at the pile.
+  const reserveVisible = useRef(new Animated.Value(1)).current;
   const slotRefs = useRef<(View | null)[]>([]);
   const slotRects = useRef<{ col: number; x: number; y: number; w: number; h: number }[]>([]);
 
@@ -467,8 +470,13 @@ export default function GameScreen({
             gs.moveY <= r.y + r.h + pad,
         );
         if (hit) {
+          // Hide the card being consumed the instant we commit, so it can't
+          // flash at the reserve pile when dragXY snaps home before the next
+          // card renders. Restore next frame — the queued card pops in cleanly.
+          reserveVisible.setValue(0);
           dispatch({ type: 'parkReserve', col: hit.col });
           settleDrag(true); // parked: the next reserve card pops in at rest
+          requestAnimationFrame(() => reserveVisible.setValue(1));
         } else {
           settleDrag(false); // no target: spring home
         }
@@ -790,6 +798,7 @@ export default function GameScreen({
                     {...reservePan.panHandlers}
                     style={{
                       marginTop: reserveInTray ? Math.round(pileH * 0.2) : 0,
+                      opacity: reserveVisible,
                       transform: [
                         ...dragXY.getTranslateTransform(),
                         { scale: draggingReserve ? 1.08 : 1 },
