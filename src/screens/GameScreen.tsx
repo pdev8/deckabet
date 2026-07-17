@@ -382,7 +382,16 @@ export default function GameScreen({
     .filter((t) => t.letter !== '');
 
   const onRerollSwap = (cols: number[]) => {
-    fire('play'); // firmer impact as the selected cards drop to the bottom of the stock
+    // A Heavy thunk as the selected cards drop to the bottom of the stock — the
+    // 'play' Medium impact was too subtle to feel under the swap, so hit it
+    // directly at full strength (the selection ticks already keep the engine warm).
+    if (settingsRef.current.haptics) {
+      try {
+        void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+      } catch {
+        // haptics unsupported on this device — ignore
+      }
+    }
     dispatch({ type: 'reroll', cols });
     setShowReroll(false); // one shot — commit the swap and reveal the new board
   };
