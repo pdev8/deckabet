@@ -1,0 +1,505 @@
+<title>LETTERFALL — Roadmap to the App Store</title>
+<style>
+  :root {
+    --bg: #f4f0e5;
+    --surface: #fbf9f2;
+    --surface-hi: #ffffff;
+    --border: #ddd6c4;
+    --ink: #26241e;
+    --muted: #6d6b5e;
+    --faint: #9a9789;
+    --green: #157f47;
+    --green-soft: rgba(21, 127, 71, 0.12);
+    --orange: #b25a1b;
+    --orange-soft: rgba(178, 90, 27, 0.12);
+    --card: #fffef8;
+    --card-edge: #d9cfb8;
+    --card-ink: #26241e;
+    --shadow: 0 1px 3px rgba(38, 36, 30, 0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1216;
+      --surface: #151a20;
+      --surface-hi: #1b2129;
+      --border: #2a2f36;
+      --ink: #e9e5db;
+      --muted: #8b93a0;
+      --faint: #5c6470;
+      --green: #3ddc84;
+      --green-soft: rgba(61, 220, 132, 0.14);
+      --orange: #f0883e;
+      --orange-soft: rgba(240, 136, 62, 0.14);
+      --card: #f2ead9;
+      --card-edge: #d9cfb8;
+      --card-ink: #26241e;
+      --shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1216;
+    --surface: #151a20;
+    --surface-hi: #1b2129;
+    --border: #2a2f36;
+    --ink: #e9e5db;
+    --muted: #8b93a0;
+    --faint: #5c6470;
+    --green: #3ddc84;
+    --green-soft: rgba(61, 220, 132, 0.14);
+    --orange: #f0883e;
+    --orange-soft: rgba(240, 136, 62, 0.14);
+    --card: #f2ead9;
+    --card-edge: #d9cfb8;
+    --card-ink: #26241e;
+    --shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  }
+  :root[data-theme="light"] {
+    --bg: #f4f0e5;
+    --surface: #fbf9f2;
+    --surface-hi: #ffffff;
+    --border: #ddd6c4;
+    --ink: #26241e;
+    --muted: #6d6b5e;
+    --faint: #9a9789;
+    --green: #157f47;
+    --green-soft: rgba(21, 127, 71, 0.12);
+    --orange: #b25a1b;
+    --orange-soft: rgba(178, 90, 27, 0.12);
+    --card: #fffef8;
+    --card-edge: #d9cfb8;
+    --card-ink: #26241e;
+    --shadow: 0 1px 3px rgba(38, 36, 30, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    margin: 0;
+    padding: 48px 20px 80px;
+  }
+  .page { max-width: 860px; margin: 0 auto; }
+  code, .mono {
+    font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.86em;
+  }
+
+  /* ---------- header ---------- */
+  .wordmark {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    color: var(--ink);
+  }
+  .wordmark .spade { color: var(--green); }
+  .tilerow { display: flex; gap: 7px; margin: 22px 0 14px; flex-wrap: wrap; }
+  .tile {
+    width: 44px; height: 58px;
+    background: var(--card);
+    border: 1px solid var(--card-edge);
+    border-radius: 7px;
+    box-shadow: var(--shadow);
+    color: var(--card-ink);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 800;
+    position: relative;
+  }
+  .tile::before {
+    content: attr(data-l);
+    position: absolute; top: 3px; left: 5px;
+    font-size: 9px; font-weight: 700; opacity: 0.45;
+  }
+  .tile.orange { border-color: var(--orange); border-width: 1.5px; }
+  h1 {
+    font-size: 30px; font-weight: 800; letter-spacing: 0.5px;
+    margin: 0 0 8px; text-wrap: balance;
+  }
+  .lede { color: var(--muted); max-width: 62ch; margin: 0 0 10px; }
+  .meta-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+  .chip {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.4px;
+    padding: 4px 10px; border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+  }
+  .chip.green { color: var(--green); border-color: transparent; background: var(--green-soft); }
+  .chip.orange { color: var(--orange); border-color: transparent; background: var(--orange-soft); }
+
+  /* ---------- sections ---------- */
+  section { margin-top: 52px; }
+  .kicker {
+    font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+    text-transform: uppercase; color: var(--faint); margin: 0 0 6px;
+  }
+  h2 {
+    font-size: 21px; font-weight: 800; letter-spacing: 0.3px;
+    margin: 0 0 14px; text-wrap: balance;
+  }
+  h2 .id { color: var(--faint); font-weight: 700; margin-right: 8px; }
+  .intent { color: var(--muted); font-style: italic; margin: -6px 0 14px; max-width: 62ch; }
+  p { max-width: 68ch; }
+
+  /* ---------- milestones ---------- */
+  .miles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+  .mile {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 16px;
+  }
+  .mile .m-id { font-weight: 800; color: var(--green); font-size: 13px; letter-spacing: 1px; }
+  .mile .m-name { font-weight: 700; margin: 2px 0 6px; }
+  .mile .m-exit { font-size: 13px; color: var(--muted); line-height: 1.45; }
+
+  /* ---------- tables ---------- */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border); border-radius: 12px;
+    background: var(--surface);
+  }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th {
+    text-align: left; font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--faint); font-weight: 700;
+    padding: 10px 14px; border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td.id { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; color: var(--orange); white-space: nowrap; font-weight: 600; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .size {
+    display: inline-block; min-width: 22px; text-align: center;
+    font-size: 11px; font-weight: 800; border-radius: 6px; padding: 2px 5px;
+  }
+  .size.s { background: var(--green-soft); color: var(--green); }
+  .size.m { background: var(--orange-soft); color: var(--orange); }
+  .size.l { background: var(--surface-hi); color: var(--muted); border: 1px solid var(--border); }
+  .crit { color: var(--muted); }
+
+  /* ---------- scoring ---------- */
+  .valgroups { display: flex; flex-wrap: wrap; gap: 14px; margin: 18px 0; }
+  .valgroup { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .valgroup .pts {
+    font-size: 11px; font-weight: 800; letter-spacing: 1px; color: var(--faint);
+    text-transform: uppercase;
+  }
+  .minirow { display: flex; gap: 5px; flex-wrap: wrap; max-width: 250px; }
+  .mini {
+    width: 26px; height: 34px; border-radius: 5px;
+    background: var(--card); border: 1px solid var(--card-edge);
+    color: var(--card-ink); font-weight: 800; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow);
+  }
+  .formula {
+    background: var(--surface-hi); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px; margin: 14px 0;
+    font-family: ui-monospace, Menlo, monospace; font-size: 13.5px;
+    overflow-x: auto; white-space: pre; line-height: 1.7;
+  }
+  .callout {
+    border: 1px solid var(--border); background: var(--surface);
+    border-radius: 12px; padding: 16px 18px; margin: 16px 0;
+  }
+  .callout .c-title { font-weight: 800; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+  .callout p { margin: 0; font-size: 14.5px; color: var(--muted); }
+  .callout .formula { margin-bottom: 0; }
+
+  /* ---------- achievements ---------- */
+  .badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+  .badge {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .badge .b-name { font-weight: 700; font-size: 14.5px; }
+  .badge .b-name::before { content: "♠ "; color: var(--green); }
+  .badge .b-crit { font-size: 13px; color: var(--muted); margin-top: 3px; line-height: 1.45; }
+
+  /* ---------- footer ---------- */
+  .foot {
+    margin-top: 60px; padding-top: 18px; border-top: 1px solid var(--border);
+    color: var(--faint); font-size: 13px; max-width: 68ch;
+  }
+  .foot .mono { color: var(--muted); }
+  ol { padding-left: 22px; max-width: 66ch; }
+  li { margin-bottom: 6px; }
+  a { color: var(--green); }
+  a:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; border-radius: 3px; }
+</style>
+
+<div class="page">
+  <header>
+    <div class="wordmark">LETTERFALL <span class="spade">♠</span></div>
+    <div class="tilerow" aria-hidden="true">
+      <div class="tile" data-l="R">R</div>
+      <div class="tile" data-l="O">O</div>
+      <div class="tile" data-l="A">A</div>
+      <div class="tile" data-l="D">D</div>
+      <div class="tile orange" data-l="M">M</div>
+      <div class="tile" data-l="A">A</div>
+      <div class="tile" data-l="P">P</div>
+    </div>
+    <h1>Roadmap to the App Store</h1>
+    <p class="lede">Word Klondike — every deal winnable. Seven epics take the finished core loop
+    to a scored, persistent, competitive game that passes App Store review.
+    One PR per ticket; this page mirrors <span class="mono">docs/ROADMAP.md</span>, which is canonical.</p>
+    <div class="meta-chips">
+      <span class="chip green">core loop done</span>
+      <span class="chip">290 verified deals</span>
+      <span class="chip orange">next: LF-100</span>
+      <span class="chip">branch: lf-&lt;ticket&gt;/&lt;slug&gt;</span>
+    </div>
+  </header>
+
+  <section>
+    <p class="kicker">Sequence</p>
+    <h2>Milestones</h2>
+    <div class="miles">
+      <div class="mile">
+        <div class="m-id">M1</div>
+        <div class="m-name">Scored</div>
+        <div class="m-exit">E0 + E1 — every win produces a defensible score with a breakdown; CI green on every PR.</div>
+      </div>
+      <div class="mile">
+        <div class="m-id">M2</div>
+        <div class="m-name">Sticky</div>
+        <div class="m-exit">E2 + E3 — stats survive relaunch, games resume mid-deal, difficulty is player-controlled.</div>
+      </div>
+      <div class="mile">
+        <div class="m-id">M3</div>
+        <div class="m-name">Social</div>
+        <div class="m-exit">E4 + E5 — daily challenge and Game Center leaderboards live; badges unlock.</div>
+      </div>
+      <div class="mile">
+        <div class="m-id">M4</div>
+        <div class="m-name">Shipped</div>
+        <div class="m-exit">E6 — approved and live on the App Store.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="kicker">Epic</p>
+    <h2><span class="id">E0</span>Engineering Foundation</h2>
+    <p class="intent">The repo becomes a codebase: tests, CI, structure. Everything later depends on this.</p>
+    <div class="table-wrap"><table>
+      <tr><th>ID</th><th>Ticket</th><th>Size</th><th>Acceptance</th></tr>
+      <tr><td class="id">LF-100</td><td>Port reducer tests into repo with Jest</td><td><span class="size s">S</span></td><td class="crit"><code>npm test</code> runs park/swap/withdraw/win suite + deal schema validation; scratchpad scripts retired</td></tr>
+      <tr><td class="id">LF-101</td><td>GitHub Actions CI</td><td><span class="size s">S</span></td><td class="crit">Typecheck + tests on every PR; red PRs can't merge</td></tr>
+      <tr><td class="id">LF-102</td><td>ESLint + Prettier</td><td><span class="size s">S</span></td><td class="crit">Config committed, codebase clean, CI enforces</td></tr>
+      <tr><td class="id">LF-103</td><td>Split App.tsx into components + screens</td><td><span class="size m">M</span></td><td class="crit">Card / Tray / Tableau / Piles components; App.tsx &lt; 150 lines; no behavior change</td></tr>
+      <tr><td class="id">LF-104</td><td>PR template + CONTRIBUTING.md</td><td><span class="size s">S</span></td><td class="crit">Template asks for ticket ID, test evidence, screenshots on UI changes</td></tr>
+      <tr><td class="id">LF-105</td><td>Deal generator as repo script, witnesses stored</td><td><span class="size m">M</span></td><td class="crit">Generator checked in; every deal carries its witness; Jest replays all witnesses through the reducer</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <p class="kicker">Epic</p>
+    <h2><span class="id">E1</span>Scoring Engine</h2>
+    <p class="intent">Implements the scoring spec below — pure functions, heavily tested, then wired into the UI.</p>
+    <div class="table-wrap"><table>
+      <tr><th>ID</th><th>Ticket</th><th>Size</th><th>Acceptance</th></tr>
+      <tr><td class="id">LF-110</td><td><span class="mono">src/scoring.ts</span>: letter values + word score</td><td><span class="size s">S</span></td><td class="crit">Matches spec tables exactly; unit tests incl. QUIZ = 28</td></tr>
+      <tr><td class="id">LF-111</td><td>Deal score: multipliers; reducer tracks counters</td><td><span class="size m">M</span></td><td class="crit">State carries reserve letters / parks / recycles used; matches worked example</td></tr>
+      <tr><td class="id">LF-112</td><td>Live word score preview in tray</td><td><span class="size s">S</span></td><td class="crit">Valid word shows its score on the PLAY button</td></tr>
+      <tr><td class="id">LF-113</td><td>Win screen score breakdown</td><td><span class="size m">M</span></td><td class="crit">Animated tally: word scores → multipliers → total; matches scoring module</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <p class="kicker">Epic</p>
+    <h2><span class="id">E2</span>Persistence &amp; Stats</h2>
+    <div class="table-wrap"><table>
+      <tr><th>ID</th><th>Ticket</th><th>Size</th><th>Acceptance</th></tr>
+      <tr><td class="id">LF-120</td><td>Storage layer (versioned, migratable)</td><td><span class="size s">S</span></td><td class="crit">Typed get/set over AsyncStorage; unit-tested with mock storage</td></tr>
+      <tr><td class="id">LF-121</td><td>Lifetime stats + streaks persisted</td><td><span class="size s">S</span></td><td class="crit">Wins, streaks, points, words, best word survive relaunch</td></tr>
+      <tr><td class="id">LF-122</td><td>Resume in-progress deal</td><td><span class="size m">M</span></td><td class="crit">Kill mid-deal → relaunch restores exact state including tray</td></tr>
+      <tr><td class="id">LF-123</td><td>Game history + personal bests</td><td><span class="size s">S</span></td><td class="crit">Best deal score, best word, fastest clear per difficulty; last 50 games</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <p class="kicker">Epic</p>
+    <h2><span class="id">E3</span>Settings &amp; Difficulty</h2>
+    <div class="table-wrap"><table>
+      <tr><th>ID</th><th>Ticket</th><th>Size</th><th>Acceptance</th></tr>
+      <tr><td class="id">LF-130</td><td>Settings screen + persisted store</td><td><span class="size s">S</span></td><td class="crit">Gear in top bar; values persist</td></tr>
+      <tr><td class="id">LF-131</td><td>Difficulty presets wired to game config</td><td><span class="size m">M</span></td><td class="crit">Presets change recycles + park bays per spec; apply to next deal only; score multiplier applied</td></tr>
+      <tr><td class="id">LF-132</td><td>Sound, haptics, reduce-motion toggles</td><td><span class="size m">M</span></td><td class="crit">Haptics on taps/plays/wins; toggles respected everywhere</td></tr>
+      <tr><td class="id">LF-133</td><td>How-to-play screen</td><td><span class="size m">M</span></td><td class="crit">Rules, park bays, scoring summary; linked from settings + first launch</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <p class="kicker">Epic</p>
+    <h2><span class="id">E4</span>Leaderboards</h2>
+    <div class="table-wrap"><table>
+      <tr><th>ID</th><th>Ticket</th><th>Size</th><th>Acceptance</th></tr>
+      <tr><td class="id">LF-140</td><td>Local leaderboards</td><td><span class="size s">S</span></td><td class="crit">Top-20 deal scores per difficulty, offline, in-app</td></tr>
+      <tr><td class="id">LF-141</td><td>Daily challenge</td><td><span class="size m">M</span></td><td class="crit">Same date-hashed deal for everyone; one scored attempt/day; practice unscored</td></tr>
+      <tr><td class="id">LF-142</td><td>Game Center: plugin + auth</td><td><span class="size m">M</span></td><td class="crit">Entitlement via config plugin; silent auth; offline fallback</td></tr>
+      <tr><td class="id">LF-143</td><td>Game Center: submit + fetch boards</td><td><span class="size m">M</span></td><td class="crit">All-time points, best deal per difficulty, daily recurring board</td></tr>
+      <tr><td class="id">LF-144</td><td>Leaderboard screen</td><td><span class="size m">M</span></td><td class="crit">Daily / Best deals / All-time tabs; player rank; local fallback</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <p class="kicker">Epic</p>
+    <h2><span class="id">E5</span>Achievements</h2>
+    <div class="table-wrap"><table>
+      <tr><th>ID</th><th>Ticket</th><th>Size</th><th>Acceptance</th></tr>
+      <tr><td class="id">LF-150</td><td>Achievement engine</td><td><span class="size m">M</span></td><td class="crit">Declarative rules over game events; persisted; decoupled from game logic</td></tr>
+      <tr><td class="id">LF-151</td><td>Badge definitions</td><td><span class="size s">S</span></td><td class="crit">All badges defined: id, name, tiers, criteria, artwork slot</td></tr>
+      <tr><td class="id">LF-152</td><td>Badge gallery + unlock toast</td><td><span class="size m">M</span></td><td class="crit">Locked/unlocked/tier states; toast + haptic on unlock</td></tr>
+      <tr><td class="id">LF-153</td><td>Game Center achievements sync</td><td><span class="size s">S</span></td><td class="crit">Unlocks mirror to GC; idempotent</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <p class="kicker">Epic</p>
+    <h2><span class="id">E6</span>App Store Readiness</h2>
+    <div class="table-wrap"><table>
+      <tr><th>ID</th><th>Ticket</th><th>Size</th><th>Acceptance</th></tr>
+      <tr><td class="id">LF-160</td><td>Branding: icon, splash, wordmark</td><td><span class="size m">M</span></td><td class="crit">Final art; dark splash matches theme</td></tr>
+      <tr><td class="id">LF-161</td><td>Onboarding tutorial</td><td><span class="size m">M</span></td><td class="crit">Guided first deal teaching tap/drag/park; skippable; replayable</td></tr>
+      <tr><td class="id">LF-162</td><td>Accessibility pass</td><td><span class="size m">M</span></td><td class="crit">VoiceOver labels, dynamic type, reduce-motion honored</td></tr>
+      <tr><td class="id">LF-163</td><td>Sound design</td><td><span class="size m">M</span></td><td class="crit">Card slide/flip/play/win; honors silent switch</td></tr>
+      <tr><td class="id">LF-164</td><td>Crash reporting + error boundary</td><td><span class="size s">S</span></td><td class="crit">Sentry via EAS; boundary recovers to fresh deal</td></tr>
+      <tr><td class="id">LF-165</td><td>EAS build + TestFlight pipeline</td><td><span class="size m">M</span></td><td class="crit">Build profiles; internal distribution documented</td></tr>
+      <tr><td class="id">LF-166</td><td>Privacy policy + store metadata</td><td><span class="size m">M</span></td><td class="crit">Privacy manifest (GC only, no tracking); screenshots; listing copy</td></tr>
+      <tr><td class="id">LF-167</td><td>Submit + review fixes</td><td><span class="size m">M</span></td><td class="crit">Approved on the App Store</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <p class="kicker">Spec</p>
+    <h2>Scoring</h2>
+    <p>Scoring rewards <strong>hard letters, long words, word economy, and stock discipline</strong>.
+    Everything is a pure function of the finished deal — no hidden state, fully unit-testable.</p>
+
+    <h3>Letter values</h3>
+    <div class="valgroups">
+      <div class="valgroup"><span class="pts">1 pt</span>
+        <div class="minirow"><div class="mini">A</div><div class="mini">E</div><div class="mini">I</div><div class="mini">O</div><div class="mini">U</div><div class="mini">L</div><div class="mini">N</div><div class="mini">S</div><div class="mini">T</div><div class="mini">R</div></div>
+      </div>
+      <div class="valgroup"><span class="pts">2 pts</span>
+        <div class="minirow"><div class="mini">D</div><div class="mini">G</div></div>
+      </div>
+      <div class="valgroup"><span class="pts">3 pts</span>
+        <div class="minirow"><div class="mini">B</div><div class="mini">C</div><div class="mini">M</div><div class="mini">P</div></div>
+      </div>
+      <div class="valgroup"><span class="pts">4 pts</span>
+        <div class="minirow"><div class="mini">F</div><div class="mini">H</div><div class="mini">V</div><div class="mini">W</div><div class="mini">Y</div></div>
+      </div>
+      <div class="valgroup"><span class="pts">5 pts</span>
+        <div class="minirow"><div class="mini">K</div></div>
+      </div>
+      <div class="valgroup"><span class="pts">8 pts</span>
+        <div class="minirow"><div class="mini">J</div><div class="mini">X</div></div>
+      </div>
+      <div class="valgroup"><span class="pts">10 pts</span>
+        <div class="minirow"><div class="mini">Q</div><div class="mini">Z</div></div>
+      </div>
+    </div>
+
+    <h3>Word score</h3>
+    <div class="formula">wordScore = round( Σ letterValue × lengthMult )
+
+length      3      4      5      6      7      8
+lengthMult  1.00   1.25   1.60   2.00   2.50   3.20</div>
+    <p>Deliberately super-linear: one six-letter word beats two threes made of the
+    same letters. <span class="mono">QUIZ = (10+1+1+10) × 1.25 = 28</span>; <span class="mono">CAT = 5</span>.</p>
+
+    <h3>Deal score — awarded only on a win</h3>
+    <div class="formula">dealScore = round( baseScore × wordEconomyMult × stockEconomyMult × difficultyMult )
+
+baseScore = Σ wordScore over the winning deal
+
+words used         ≤4     5      6      7      8      9      10     11+
+wordEconomyMult    1.75   1.60   1.45   1.30   1.20   1.10   1.05   1.00
+
+stockEconomyMult = clamp( 1.5 − 0.08·reserveLettersPlayed
+                              − 0.05·parksUsed
+                              − 0.08·recyclesUsed,  1.0, 1.5 )</div>
+    <p>Drawing is free — browsing the stock costs nothing; <em>consuming</em> it does.
+    A clear with zero stock letters, zero parks, and zero recycles keeps the full
+    1.5 — the <strong>Purist bonus</strong>. Difficulty multiplies last: Casual ×1.00,
+    Standard ×1.25, Expert ×1.60.</p>
+
+    <div class="callout">
+      <div class="c-title">Worked example</div>
+      <p>Standard difficulty, cleared in 7 words, word scores summing to 240,
+      using 3 reserve letters, 1 park, 0 recycles:</p>
+      <div class="formula">stockEconomyMult = 1.5 − 0.24 − 0.05 = 1.21
+dealScore = round( 240 × 1.30 × 1.21 × 1.25 ) = 472</div>
+    </div>
+
+    <p class="crit">Dead or abandoned deals bank no points (their words still count toward
+    achievements). Total points — the leaderboard currency — is the sum of banked deal scores.</p>
+  </section>
+
+  <section>
+    <p class="kicker">Spec</p>
+    <h2>Difficulty presets</h2>
+    <div class="table-wrap"><table>
+      <tr><th>Preset</th><th class="num">Recycles</th><th class="num">Park bays</th><th class="num">Score multiplier</th></tr>
+      <tr><td>Casual</td><td class="num">2</td><td class="num">3</td><td class="num">×1.00</td></tr>
+      <tr><td>Standard</td><td class="num">1</td><td class="num">2</td><td class="num">×1.25</td></tr>
+      <tr><td>Expert</td><td class="num">0</td><td class="num">1</td><td class="num">×1.60</td></tr>
+    </table></div>
+    <p>Every shipped deal is solver-verified winnable <em>without any recycles or parks</em>
+    (witnesses draw each needed stock letter exactly once, in order), so all three presets
+    keep the "every deal winnable" promise. Difficulty changes apply from the next deal.</p>
+  </section>
+
+  <section>
+    <p class="kicker">Spec</p>
+    <h2>Leaderboards</h2>
+    <p><strong>Local first</strong>, then <strong>Game Center</strong> — zero backend, App-Store-native,
+    and it carries achievements too. Three boards: all-time points, best deal per difficulty,
+    and the daily challenge (recurring daily board).</p>
+    <p>The <strong>daily challenge</strong> makes ranks honest: everyone plays the same deal
+    (<span class="mono">dealIndex = hash(YYYY-MM-DD) % deals.length</span>), one scored attempt
+    per day, practice replays unscored. Known limitation: scores are client-computed —
+    acceptable at launch; a move-log replay validator is the post-launch hardening path.</p>
+  </section>
+
+  <section>
+    <p class="kicker">Spec</p>
+    <h2>Achievements</h2>
+    <div class="badges">
+      <div class="badge"><div class="b-name">First Light</div><div class="b-crit">Win your first deal</div></div>
+      <div class="badge"><div class="b-name">Regular / Devotee / Century</div><div class="b-crit">Win 10 / 50 / 100 deals</div></div>
+      <div class="badge"><div class="b-name">Warm / Hot / Eternal</div><div class="b-crit">Win streak of 3 / 7 / 30</div></div>
+      <div class="badge"><div class="b-name">Purist</div><div class="b-crit">Win with the full 1.5 stock bonus — no stock letters, parks, or recycles</div></div>
+      <div class="badge"><div class="b-name">Minimalist</div><div class="b-crit">Win in 5 words or fewer</div></div>
+      <div class="badge"><div class="b-name">Full Rack</div><div class="b-crit">Play an 8-letter word</div></div>
+      <div class="badge"><div class="b-name">High Roller</div><div class="b-crit">Single word worth 60+ points</div></div>
+      <div class="badge"><div class="b-name">Big Board</div><div class="b-crit">Deal score of 750+</div></div>
+      <div class="badge"><div class="b-name">Rare Bird 🥉🥈🥇</div><div class="b-crit">Play 1 / 10 / 50 words containing J, Q, X, or Z</div></div>
+      <div class="badge"><div class="b-name">Valet</div><div class="b-crit">Win a deal that used all three park bays</div></div>
+      <div class="badge"><div class="b-name">Tightrope</div><div class="b-crit">Win on Expert</div></div>
+      <div class="badge"><div class="b-name">Daybreak</div><div class="b-crit">Play your first daily challenge</div></div>
+      <div class="badge"><div class="b-name">Dedicated</div><div class="b-crit">Seven daily challenges in a row</div></div>
+      <div class="badge"><div class="b-name">Wordsmith 🥉🥈🥇</div><div class="b-crit">Play 100 / 500 / 2000 words lifetime</div></div>
+      <div class="badge"><div class="b-name">Millionaire's Club 🥉🥈🥇</div><div class="b-crit">10k / 100k / 1M total points</div></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="kicker">Parked</p>
+    <h2>Open questions</h2>
+    <ol>
+      <li><strong>Timer:</strong> does clear speed affect score, or stay achievement-only? Default: out of score — this is a thinking game.</li>
+      <li><strong>Android:</strong> Game Center is iOS-only; Play Games Services or a small backend when Android ships.</li>
+      <li><strong>Deal pool growth:</strong> ship new deals in app updates vs. remote config.</li>
+    </ol>
+  </section>
+
+  <div class="foot">
+    Canonical source: <span class="mono">docs/ROADMAP.md</span> — this page is its rendering.
+    Workflow: one PR per ticket, branches named <span class="mono">lf-&lt;ticket&gt;/&lt;slug&gt;</span>,
+    typecheck + tests green before merge. LETTERFALL ♠ word klondike — every deal winnable.
+  </div>
+</div>
