@@ -275,3 +275,34 @@ describe('randomDealIndex', () => {
     expect(randomDealIndex(3)).toBe(4);
   });
 });
+
+describe('scoring counters', () => {
+  it('counts reserve letters played into words', () => {
+    let s = base({ reserve: ['x', 't'] }); // 't' on top completes c-a-t
+    s = reducer(s, { type: 'tapColumn', col: 4 });
+    s = reducer(s, { type: 'tapColumn', col: 5 });
+    s = reducer(s, { type: 'tapReserve' });
+    s = reducer(s, { type: 'play' });
+    expect(s.played).toEqual(['cat']);
+    expect(s.reserveLettersPlayed).toBe(1);
+    expect(s.reserve).toEqual(['x']);
+  });
+
+  it('counts parks and recycles; rejected actions never count', () => {
+    let s = base();
+    s = reducer(s, { type: 'parkReserve', col: 0 });
+    expect(s.parksUsed).toBe(1);
+    s = reducer(s, { type: 'parkReserve', col: 0 }); // occupied — rejected
+    expect(s.parksUsed).toBe(1);
+    s = reducer(s, { type: 'draw' }); // stock empty, reserve ['x'] -> recycle
+    expect(s.recyclesUsed).toBe(1);
+    expect(s.recyclesLeft).toBe(RECYCLES_PER_DEAL - 1);
+  });
+
+  it('resets all counters on a fresh deal', () => {
+    const s = makeDealState(0, { won: 0, played: 0, streak: 0 });
+    expect(s.reserveLettersPlayed).toBe(0);
+    expect(s.parksUsed).toBe(0);
+    expect(s.recyclesUsed).toBe(0);
+  });
+});

@@ -53,6 +53,10 @@ export interface GameState {
   played: string[];
   /** Draws + plays this deal; used to decide if an abandoned deal counts as played. */
   movesMade: number;
+  /** Scoring counters (spec §3): reserve letters played into words, parks, recycles. */
+  reserveLettersPlayed: number;
+  parksUsed: number;
+  recyclesUsed: number;
   won: boolean;
   stats: SessionStats;
 }
