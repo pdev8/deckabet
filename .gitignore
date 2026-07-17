@@ -3,6 +3,9 @@
 # dependencies
 node_modules/
 
+# build-time downloads (scripts/build-lexicon.py)
+.cache/
+
 # Expo
 .expo/
 dist/

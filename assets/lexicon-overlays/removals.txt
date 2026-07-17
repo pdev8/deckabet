@@ -1,0 +1,5 @@
+# DECKABET lexicon overlay: removals.
+# One word per line, lowercase. Lines starting with # are comments.
+# Case-by-case removals decided by us, distinct from the vendored
+# exclusions.txt (LDNOOBW) list. Words listed here are dropped from the
+# built lexicon by scripts/build-lexicon.py.
