@@ -3,6 +3,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { parseSavedGame, type SavedGame } from './game';
+import { emptyHistory, type HistoryState } from './history';
 import { emptyStats, type LifetimeStats } from './stats';
 import { createStore } from './storage';
 
@@ -41,4 +42,17 @@ export async function loadGame(): Promise<SavedGame | null> {
 
 export function clearGame(): Promise<void> {
   return store.remove(GAME_KEY);
+}
+
+// ---------------------------------------------------------------- history (DB-123)
+
+export const HISTORY_KEY = 'gameHistory';
+
+/** Missing/corrupt data resolves to empty history — storage never crashes the game. */
+export function loadHistory(): Promise<HistoryState> {
+  return store.get(HISTORY_KEY, emptyHistory());
+}
+
+export function saveHistory(h: HistoryState): Promise<void> {
+  return store.set(HISTORY_KEY, h);
 }
