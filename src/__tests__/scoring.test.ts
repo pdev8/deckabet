@@ -25,7 +25,7 @@ describe('wordScore', () => {
   it('matches the spec examples', () => {
     expect(wordScore('quiz')).toBe(28); // (10+1+1+10) × 1.25
     expect(wordScore('cat')).toBe(5); // (3+1+1) × 1.0
-    expect(wordScore('prized')).toBe(48); // (3+1+1+10+1+2) × 2.0 — Encore example base
+    expect(wordScore('prized')).toBe(36); // (3+1+1+10+1+2) × 2.0 — Encore example base
   });
 
   it('applies each length multiplier', () => {
