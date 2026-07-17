@@ -26,6 +26,9 @@ export function makeDealState(dealIndex: number, stats: SessionStats): GameState
     tray: [],
     played: [],
     movesMade: 0,
+    reserveLettersPlayed: 0,
+    parksUsed: 0,
+    recyclesUsed: 0,
     won: false,
     stats,
   };
@@ -74,6 +77,7 @@ export function reducer(state: GameState, action: Action): GameState {
           reserve: [],
           recyclesLeft: Math.max(0, state.recyclesLeft - 1),
           movesMade: state.movesMade + 1,
+          recyclesUsed: state.recyclesUsed + 1,
         };
       }
       return state; // inert: empty stock, nothing to recycle
@@ -124,6 +128,7 @@ export function reducer(state: GameState, action: Action): GameState {
         // A trayed reserve entry is always the reserve top — it's the card being parked.
         tray: state.tray.filter((e) => e.source !== 'reserve'),
         movesMade: state.movesMade + 1,
+        parksUsed: state.parksUsed + 1,
       };
     }
 
@@ -168,6 +173,7 @@ export function reducer(state: GameState, action: Action): GameState {
             streak: state.stats.streak + 1,
           }
         : state.stats;
+      const reserveUsed = state.tray.filter((e) => e.source === 'reserve').length;
       return {
         ...state,
         columns,
@@ -175,6 +181,7 @@ export function reducer(state: GameState, action: Action): GameState {
         tray: [],
         played: [...state.played, word],
         movesMade: state.movesMade + 1,
+        reserveLettersPlayed: state.reserveLettersPlayed + reserveUsed,
         won,
         stats,
       };
