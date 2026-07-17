@@ -269,7 +269,7 @@
       <div class="mile">
         <div class="m-id">M3</div>
         <div class="m-name">Social</div>
-        <div class="m-exit">E4 + E5 — daily challenge and Game Center leaderboards live; badges unlock.</div>
+        <div class="m-exit">E7 + E4 + E5 — the living deck generates the daily set; Game Center boards live; badges unlock.</div>
       </div>
       <div class="mile">
         <div class="m-id">M4</div>
@@ -337,7 +337,7 @@
     <div class="table-wrap"><table>
       <tr><th>ID</th><th>Ticket</th><th>Size</th><th>Acceptance</th></tr>
       <tr><td class="id">LF-140</td><td>Local leaderboards</td><td><span class="size s">S</span></td><td class="crit">Top-20 deal scores per difficulty, offline, in-app</td></tr>
-      <tr><td class="id">LF-141</td><td>Daily challenge</td><td><span class="size m">M</span></td><td class="crit">Same date-hashed deal for everyone; one scored attempt/day; practice unscored</td></tr>
+      <tr><td class="id">LF-141</td><td>Daily set leaderboard integration</td><td><span class="size m">M</span></td><td class="crit">Depends on E7 (LF-174): cumulative daily total submits to the daily board; practice unscored</td></tr>
       <tr><td class="id">LF-142</td><td>Game Center: plugin + auth</td><td><span class="size m">M</span></td><td class="crit">Entitlement via config plugin; silent auth; offline fallback</td></tr>
       <tr><td class="id">LF-143</td><td>Game Center: submit + fetch boards</td><td><span class="size m">M</span></td><td class="crit">All-time points, best deal per difficulty, daily recurring board</td></tr>
       <tr><td class="id">LF-144</td><td>Leaderboard screen</td><td><span class="size m">M</span></td><td class="crit">Daily / Best deals / All-time tabs; player rank; local fallback</td></tr>
@@ -354,6 +354,39 @@
       <tr><td class="id">LF-152</td><td>Badge gallery + unlock toast</td><td><span class="size m">M</span></td><td class="crit">Locked/unlocked/tier states; toast + haptic on unlock</td></tr>
       <tr><td class="id">LF-153</td><td>Game Center achievements sync</td><td><span class="size s">S</span></td><td class="crit">Unlocks mirror to GC; idempotent</td></tr>
     </table></div>
+  </section>
+
+  <section>
+    <p class="kicker">Epic · core</p>
+    <h2><span class="id">E7</span>The Living Deck <span style="color: var(--orange);">★</span></h2>
+    <p class="intent">THE core of the game — full spec in <span class="mono">docs/GENERATION.md</span>.
+    Infinite seeded deals, solvability as a maintained invariant, draw-time stock steering,
+    5-game daily sets with rising difficulty, anti-lookahead by construction. Retires the
+    static deal pool; gates the daily half of E4.</p>
+    <div class="table-wrap"><table>
+      <tr><th>ID</th><th>Ticket</th><th>Size</th><th>Acceptance</th></tr>
+      <tr><td class="id">LF-170</td><td>On-device deal generator (TS, seeded PRNG)</td><td><span class="size m">M</span></td><td class="crit">Solution-first tableau from a seed; distribution guards; openness threshold; same seed ⇒ same deal</td></tr>
+      <tr><td class="id">LF-171</td><td>Solvability checker</td><td><span class="size l">L</span></td><td class="crit">Bounded memoized "still completable?" solver, draw-time fast; escape-plan maintenance; property-tested</td></tr>
+      <tr><td class="id">LF-172</td><td>Draw-time stock steering</td><td><span class="size l">L</span></td><td class="crit">Next card = f(seed, move history); invariant never broken; generosity knob; deterministic replay tested</td></tr>
+      <tr><td class="id">LF-173</td><td>Difficulty ramp parameters</td><td><span class="size m">M</span></td><td class="crit">Per-game steering generosity + recycles + bays; daily-set score multiplier decided</td></tr>
+      <tr><td class="id">LF-174</td><td>Daily set mode</td><td><span class="size m">M</span></td><td class="crit">5 scored games/day, same for everyone, cumulative total, reset countdown; free play unlimited/unscored</td></tr>
+      <tr><td class="id">LF-175</td><td>Par estimation + score bands</td><td><span class="size m">M</span></td><td class="crit">Achievable-score estimate at generation; out-of-band deals rejected</td></tr>
+      <tr><td class="id">LF-176</td><td>Seed service (phase 1 + phase 2 stub)</td><td><span class="size m">M</span></td><td class="crit">Launch: hash(date, game, salt) on device; server-issued seeds + move-log replay validation designed</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <p class="kicker">Spec · core</p>
+    <h2>The Living Deck</h2>
+    <p>Six pillars, from <span class="mono">docs/GENERATION.md</span>:</p>
+    <div class="badges">
+      <div class="badge"><div class="b-name">Infinite, low-repeat</div><div class="b-crit">Deals generated from seeds at play time — no pool to exhaust, no file to memorize</div></div>
+      <div class="badge"><div class="b-name">Solvable, in a par band</div><div class="b-crit">A win and a good score always reachable; deal-to-deal score ceilings kept in a narrow band so totals compare skill, not luck</div></div>
+      <div class="badge"><div class="b-name">Difficulty ramps</div><div class="b-crit">Daily game 1 is generous, game 5 is tight — via steering generosity + rule tightening, never by breaking solvability</div></div>
+      <div class="badge"><div class="b-name">5 games, one daily total</div><div class="b-crit">Scored mode is a shared daily set; scarcity makes the total mean something; free play unlimited, unscored</div></div>
+      <div class="badge"><div class="b-name">The undrawn stock doesn't exist yet</div><div class="b-crit">Next card computed at draw time = f(seed, move history): kills letter floods ("seven E's"), kills lookahead tools — there's nothing stored to peek at</div></div>
+      <div class="badge"><div class="b-name">Guarantee, don't guide</div><div class="b-crit">Steering keeps <em>some</em> path alive but never hints toward it — the possibility space stays the player's</div></div>
+    </div>
   </section>
 
   <section>
@@ -493,7 +526,8 @@ dealScore = round( 240 × 1.30 × 1.21 × 1.25 ) = 472</div>
     <ol>
       <li><strong>Timer:</strong> does clear speed affect score, or stay achievement-only? Default: out of score — this is a thinking game.</li>
       <li><strong>Android:</strong> Game Center is iOS-only; Play Games Services or a small backend when Android ships.</li>
-      <li><strong>Deal pool growth:</strong> ship new deals in app updates vs. remote config.</li>
+      <li><strong>Daily set multiplier:</strong> per-game ramp multiplier vs. difficulty presets — decide in LF-173.</li>
+      <li><strong>Free-play difficulty:</strong> player-picked preset vs. also offering the ramp — default: preset.</li>
     </ol>
   </section>
 

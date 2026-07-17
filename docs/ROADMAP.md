@@ -23,7 +23,7 @@ theme, win/dead-deal overlays, session stats.
 |---|---|---|---|
 | **M1 — Scored** | The game counts | E0, E1 | Every win produces a defensible score with a breakdown screen; CI runs on every PR |
 | **M2 — Sticky** | The game remembers | E2, E3 | Stats/streaks survive relaunch; difficulty is player-controlled; game resumes mid-deal |
-| **M3 — Social** | The game competes | E4, E5 | Daily challenge + Game Center leaderboards live; badges unlock and display |
+| **M3 — Social** | The game competes | E7, E4, E5 | Living deck generates the daily set; Game Center leaderboards live; badges unlock and display |
 | **M4 — Shipped** | The game ships | E6 | App Store approval |
 
 ---
@@ -75,7 +75,7 @@ theme, win/dead-deal overlays, session stats.
 | ID | Ticket | Size | Acceptance criteria |
 |---|---|---|---|
 | LF-140 | Local leaderboards | S | Top 20 deal scores per difficulty, stored locally, viewable in-app |
-| LF-141 | Daily challenge | M | Same deterministic deal for everyone each day (date-hashed index); one scored attempt/day; practice replays unscored |
+| LF-141 | Daily set leaderboard integration | M | Depends on E7 (LF-174): cumulative daily total submits to the daily board; practice replays unscored |
 | LF-142 | Game Center: config plugin + authentication | M | expo config plugin sets GC entitlement; silent auth on launch; graceful offline fallback |
 | LF-143 | Game Center: submit + fetch leaderboards | M | Boards: All-time points, Best deal (per difficulty), Daily challenge (recurring); scores submit on win |
 | LF-144 | Leaderboard screen | M | Tabs: Daily / Best deals / All-time; shows player rank; local boards when GC unavailable |
@@ -88,6 +88,23 @@ theme, win/dead-deal overlays, session stats.
 | LF-151 | Badge definitions (spec below) | S | All ~18 badges defined with id, name, tiers, criteria, artwork slot |
 | LF-152 | Badge gallery + unlock toast | M | Grid with locked/unlocked/tier states; toast + haptic on unlock |
 | LF-153 | Game Center achievements sync | S | Unlocks mirror to GC; idempotent resubmission |
+
+## Epic E7 — The Living Deck (Generation v2) ★ core
+
+*THE core of the game — full spec in `docs/GENERATION.md`. Infinite seeded
+deals, solvability as a maintained invariant, draw-time stock steering,
+5-game daily sets with rising difficulty, anti-lookahead by construction.
+Retires the static deal pool. Gates the daily-set half of E4.*
+
+| ID | Ticket | Size | Acceptance criteria |
+|---|---|---|---|
+| LF-170 | On-device deal generator (TS port, seeded PRNG) | M | Solution-first tableau construction from a seed; same seed ⇒ same deal; distribution guards (duplicate caps, vowel/consonant window, rarity budget); openness threshold; unit-tested |
+| LF-171 | Solvability checker | L | Bounded memoized solver answers "is this state completable?" fast enough for draw time; escape-plan maintenance; property-tested against random play |
+| LF-172 | Draw-time stock steering | L | Next card = f(seed, move history); invariant never broken; guards enforced; generosity knob (helpful ↔ least-helpful legal letter); deterministic replay verified in tests |
+| LF-173 | Difficulty ramp parameters | M | Per-game (1–5) steering generosity + recycles + bays per GENERATION.md table; decide daily-set score multiplier |
+| LF-174 | Daily set mode | M | 5 scored games/day, same for all players, cumulative daily total, reset countdown UX; free play unlimited/unscored |
+| LF-175 | Par estimation + score bands | M | Generator estimates achievable score; deals outside the par band rejected; band documented and tested |
+| LF-176 | Seed service: phase 1 + phase 2 stub | M | Launch: hash(date, gameIndex, salt) on device; documented server-issued-seed + move-log replay validation design for phase 2 |
 
 ## Epic E6 — App Store Readiness
 
@@ -181,7 +198,7 @@ dealScore = round(240 × 1.30 × 1.21 × 1.25) = 472
 
 - Dead/abandoned deals bank **no points** (words still count toward achievements).
 - Total points (leaderboard currency) = Σ of banked deal scores.
-- Daily challenge scores are recorded separately from the main total.
+- **Daily total** = Σ of the daily set's five deal scores (see `docs/GENERATION.md`); recorded separately from the main total.
 - All rounding is `Math.round`, applied once per formula line shown above.
 
 ## Difficulty presets (Settings)
@@ -238,4 +255,5 @@ Tiers: 🥉 bronze / 🥈 silver / 🥇 gold where noted. Engine is declarative
 
 1. Timer: does clear-speed affect score or stay achievement-only? (default: stay out of score — thoughtful play > speed)
 2. Android: Game Center is iOS-only; Play Games Services or backend leaderboard when Android ships.
-3. Deal pool growth: ship more deals via app updates vs. remote config.
+3. Daily set score multiplier: per-game ramp multiplier vs. difficulty presets (decide in LF-173).
+4. Free-play difficulty: player-picked preset (E3) vs. also offering the ramp — default: preset.
