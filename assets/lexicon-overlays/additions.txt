@@ -1,0 +1,5 @@
+# DECKABET lexicon overlay: additions.
+# One word per line, lowercase, 3-8 letters (words failing that filter are
+# ignored by scripts/build-lexicon.py). Lines starting with # are comments.
+# Add legitimate words that ENABLE2k lacks (UK spellings, post-2000 coinages)
+# as they surface via the DB-203 missed-word feedback loop.
