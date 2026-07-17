@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { configMult, type GameConfig } from '../scoring';
 import type { Settings } from '../settings';
@@ -24,6 +25,7 @@ function bonusLabel(config: GameConfig): string {
  * consumed by DB-132; the rulebook row activates with DB-133.
  */
 export default function SettingsScreen({ onClose }: { onClose: () => void }) {
+  const insets = useSafeAreaInsets(); // back button must clear the notch / Island
   // Live from the shared store — changes take effect in the game immediately.
   const settings: Settings = useSettings();
 
@@ -65,7 +67,9 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
   );
 
   return (
-    <View style={styles.root}>
+    <View
+      style={[styles.root, { paddingTop: insets.top + 8, paddingBottom: insets.bottom + 10 }]}
+    >
       {/* top bar */}
       <View style={styles.topBar}>
         <Pressable
@@ -116,8 +120,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: C.bg,
     paddingHorizontal: 12,
-    paddingTop: 8,
-    paddingBottom: 10,
+    // vertical padding is applied inline with safe-area insets
   },
 
   // top bar — mirrors GameScreen's bar so the screens read as one room
