@@ -47,6 +47,7 @@ function makeHangers(width: number, height: number): Hanger[] {
   const totalW = n * cardW + (n - 1) * gap;
   const startX = (width - totalW) / 2;
   const baseTop = Math.round(height * 0.42); // the shared line the word hangs on (where the title sat)
+  const jitter = cardH * 0.28; // total hang-height spread ≈ 28% of a card, no more
   // Random rise order — the letters don't come up left-to-right.
   const order = LETTERS.map((_, i) => i);
   for (let k = order.length - 1; k > 0; k--) {
@@ -54,7 +55,7 @@ function makeHangers(width: number, height: number): Hanger[] {
     [order[k], order[j]] = [order[j], order[k]];
   }
   return LETTERS.map((letter, i) => {
-    const restTop = baseTop + Math.round(rand(-42, 42)); // randomized hang height per letter
+    const restTop = baseTop + Math.round(rand(-jitter / 2, jitter / 2)); // randomized hang height
     // The card starts just below the bottom edge (stretched down), released from there.
     const startTranslate = height + 40 - restTop;
     // Anchor high enough above the top that even at the stretched start
