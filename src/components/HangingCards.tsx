@@ -1,0 +1,202 @@
+import React, { useEffect, useMemo } from 'react';
+import { Animated, Easing, StyleSheet, useWindowDimensions, View } from 'react-native';
+
+import LetterCard from './LetterCard';
+import { C } from '../theme';
+
+// Title-screen ambience (DB-168): the DECKABET letters are cards hung on strings
+// on roughly one line. They're pulled up from below, whipping into place like a
+// real string (a 3-link rope that bends, plus a damped pendulum swing-in), then
+// dangle gently. All motion is native-driver. Honors reduce-motion with a
+// still, level row.
+
+const LETTERS = 'DECKABET'.split('');
+const SEGMENTS = 3; // string links — more = ropier bend
+const STRING_W = 1.5;
+// The rope is long — most of it lives above the top edge (the puppeteer). Its
+// pivot is far away, so swing angles stay small (a long pendulum barely leans).
+const SEG_AMP = [0.4, 0.55, 0.75]; // idle bend per link, growing toward the card
+const DEG = { inputRange: [-90, 90], outputRange: ['-90deg', '90deg'] };
+
+const rand = (min: number, max: number): number => min + Math.random() * (max - min);
+
+interface Hanger {
+  letter: string;
+  x: number; // card center x
+  restTop: number; // card top at rest
+  startTranslate: number; // translateY at the stretched start (card below the screen)
+  anchorTop: number; // screen y of the string's top — always negative (off-screen)
+  stringLen: number; // anchor → card top at rest
+  cardW: number;
+  cardH: number;
+  depth: number;
+  startAngle: number; // pendulum swing-in
+  period: number; // idle sway ms
+  delay: number; // rise stagger
+}
+
+function makeHangers(width: number, height: number): Hanger[] {
+  const n = LETTERS.length;
+  const margin = 16;
+  const gap = 5;
+  const cardW = Math.max(30, Math.floor((width - 2 * margin - (n - 1) * gap) / n));
+  const cardH = Math.round(cardW * 1.4);
+  const totalW = n * cardW + (n - 1) * gap;
+  const startX = (width - totalW) / 2;
+  const baseTop = Math.round(height * 0.42); // the shared line the word hangs on (where the title sat)
+  const jitter = cardH * 0.36; // total hang-height spread ≈ 36% of a card
+  // Random rise order — the letters don't come up left-to-right.
+  const order = LETTERS.map((_, i) => i);
+  for (let k = order.length - 1; k > 0; k--) {
+    const j = Math.floor(Math.random() * (k + 1));
+    [order[k], order[j]] = [order[j], order[k]];
+  }
+  return LETTERS.map((letter, i) => {
+    const restTop = baseTop + Math.round(rand(-jitter / 2, jitter / 2)); // randomized hang height
+    // The card starts just below the bottom edge (stretched down), released from there.
+    const startTranslate = height + 40 - restTop;
+    // Anchor high enough above the top that even at the stretched start
+    // (translated down by startTranslate) the string top stays off-screen.
+    const anchorTop = -(startTranslate + 80);
+    return {
+      letter,
+      x: Math.round(startX + i * (cardW + gap) + cardW / 2),
+      restTop,
+      startTranslate,
+      anchorTop,
+      stringLen: restTop - anchorTop,
+      cardW,
+      cardH,
+      depth: rand(0.82, 1),
+      startAngle: rand(2, 3.5) * (i % 2 === 0 ? 1 : -1),
+      period: rand(2800, 3800),
+      delay: Math.round(order[i] * 95 + rand(0, 70)), // staggered in the shuffled order
+    };
+  });
+}
+
+export default function HangingCards({ reduceMotion = false }: { reduceMotion?: boolean }) {
+  const { width, height } = useWindowDimensions();
+  const hangers = useMemo(() => makeHangers(width, height), [width, height]);
+
+  const rise = useMemo(() => hangers.map(() => new Animated.Value(reduceMotion ? 1 : 0)), [hangers, reduceMotion]);
+  const entry = useMemo(() => hangers.map((h) => new Animated.Value(reduceMotion ? 0 : h.startAngle)), [hangers, reduceMotion]);
+  // Per-card, per-segment idle bend.
+  const sways = useMemo(
+    () => hangers.map(() => SEG_AMP.map(() => new Animated.Value(0))),
+    [hangers],
+  );
+
+  useEffect(() => {
+    if (reduceMotion) return;
+    // Released-from-tension: the card starts stretched well below the bottom,
+    // then a bouncy spring snaps it up past its rest and settles (elastic
+    // release), while a damped pendulum swing whips the rope in.
+    const anims = hangers.flatMap((h, i) => [
+      Animated.sequence([
+        Animated.delay(h.delay),
+        Animated.spring(rise[i], {
+          toValue: 1,
+          friction: 8,
+          tension: 12, // slow, weighty settle — not a snappy pop
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.sequence([
+        Animated.delay(h.delay),
+        Animated.spring(entry[i], {
+          toValue: 0,
+          friction: 6,
+          tension: 10, // slow pendulum settle
+          useNativeDriver: true,
+        }),
+      ]),
+    ]);
+    anims.forEach((a) => a.start());
+
+    // Gentle continuous rope bend — a clean sinusoidal swing between the two
+    // extremes (fastest through the middle, easing to a stop only at the edges
+    // of the arc — no stutter at center), each link phase-lagged so a soft wave
+    // runs down the string.
+    const loops = sways.flatMap((segs, i) =>
+      segs.map((v, s) => {
+        const amp = SEG_AMP[s];
+        const dur = hangers[i].period / 2;
+        v.setValue(-amp);
+        const started = Animated.sequence([
+          Animated.delay(s * (dur / 3)), // phase-lag per link (once, then it loops clean)
+          Animated.loop(
+            Animated.sequence([
+              Animated.timing(v, { toValue: amp, duration: dur, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+              Animated.timing(v, { toValue: -amp, duration: dur, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+            ]),
+          ),
+        ]);
+        started.start();
+        return started;
+      }),
+    );
+    return () => {
+      anims.forEach((a) => a.stop());
+      loops.forEach((l) => l.stop());
+    };
+  }, [hangers, rise, entry, sways, reduceMotion]);
+
+  return (
+    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+      {hangers.map((h, i) => {
+        const segLen = h.stringLen / SEGMENTS;
+        const riseY = rise[i].interpolate({
+          inputRange: [0, 1],
+          outputRange: [h.startTranslate, 0],
+        });
+        const d = (h.stringLen + h.cardH) / 2; // pivot-to-top offset for the whole rope
+        const outerRot = Animated.add(entry[i], sways[i][0]).interpolate(DEG);
+
+        // Build the rope inside-out: card, then wrap in each link (each bends a
+        // little around its own top). All native-driver.
+        let node: React.ReactNode = <LetterCard letter={h.letter} width={h.cardW} height={h.cardH} />;
+        for (let s = SEGMENTS - 1; s >= 0; s--) {
+          const rot = s === 0 ? outerRot : sways[i][s].interpolate(DEG);
+          const isOuter = s === 0;
+          node = (
+            <Animated.View
+              key={s}
+              style={{
+                width: h.cardW,
+                alignItems: 'center',
+                transform: isOuter
+                  ? [{ translateY: riseY }, { translateY: -d }, { rotate: rot }, { translateY: d }]
+                  : [{ translateY: -segLen / 2 }, { rotate: rot }, { translateY: segLen / 2 }],
+              }}
+            >
+              <View style={[styles.string, { height: segLen }]} />
+              {node}
+            </Animated.View>
+          );
+        }
+
+        return (
+          <View
+            key={i}
+            style={[styles.anchor, { left: h.x - h.cardW / 2, top: h.anchorTop, width: h.cardW }]}
+          >
+            {node}
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  anchor: {
+    position: 'absolute',
+    top: 0,
+    alignItems: 'center',
+  },
+  string: {
+    width: STRING_W,
+    backgroundColor: C.border,
+  },
+});
