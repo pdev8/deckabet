@@ -64,8 +64,8 @@ Two layers, strictly separated:
 - **UI** — `App.tsx` is a small screen router (SafeAreaProvider + StatusBar)
   that switches a `home`/`game`/`daily` surface with a settings overlay
   (DB-168). `src/screens/HomeScreen.tsx` is the landing menu (Free Play / Daily)
-  over the `HangingCards` title animation (cards on strings, accelerometer
-  parallax); `src/screens/GameScreen.tsx` owns the
+  over the `HangingCards` title animation (letter cards released on strings that
+  dangle, all native-driver); `src/screens/GameScreen.tsx` owns the
   game UI: hooks, layout math, three PanResponder drag systems, reducer hookup,
   and screen-level styles. Presentational pieces live in `src/components/`
   (PopIn, LetterCard, CardBack, WordChip, BigButton, Overlay, HangingCards), each

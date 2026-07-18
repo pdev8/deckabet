@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Animated, Easing, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { Accelerometer } from 'expo-sensors';
 
 import LetterCard from './LetterCard';
 import { C } from '../theme';
@@ -8,12 +7,11 @@ import { C } from '../theme';
 // Title-screen ambience (DB-168): the DECKABET letters are cards hung on strings
 // on roughly one line. They're pulled up from below, whipping into place like a
 // real string (a 3-link rope that bends, plus a damped pendulum swing-in), then
-// dangle gently. The scene parallax-shifts with the phone's tilt. Honors
-// reduce-motion with a still, level row.
+// dangle gently. All motion is native-driver. Honors reduce-motion with a
+// still, level row.
 
 const LETTERS = 'DECKABET'.split('');
 const SEGMENTS = 3; // string links — more = ropier bend
-const PARALLAX = 16; // px shift at full tilt, scaled by depth
 const STRING_W = 1.5;
 // The rope is long — most of it lives above the top edge (the puppeteer). Its
 // pivot is far away, so swing angles stay small (a long pendulum barely leans).
@@ -21,7 +19,6 @@ const SEG_AMP = [0.4, 0.55, 0.75]; // idle bend per link, growing toward the car
 const DEG = { inputRange: [-90, 90], outputRange: ['-90deg', '90deg'] };
 
 const rand = (min: number, max: number): number => min + Math.random() * (max - min);
-const clamp = (v: number, lo: number, hi: number): number => Math.max(lo, Math.min(hi, v));
 
 interface Hanger {
   letter: string;
@@ -82,7 +79,6 @@ export default function HangingCards({ reduceMotion = false }: { reduceMotion?: 
   const { width, height } = useWindowDimensions();
   const hangers = useMemo(() => makeHangers(width, height), [width, height]);
 
-  const tilt = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const rise = useMemo(() => hangers.map(() => new Animated.Value(reduceMotion ? 1 : 0)), [hangers, reduceMotion]);
   const entry = useMemo(() => hangers.map((h) => new Animated.Value(reduceMotion ? 0 : h.startAngle)), [hangers, reduceMotion]);
   // Per-card, per-segment idle bend.
@@ -146,25 +142,6 @@ export default function HangingCards({ reduceMotion = false }: { reduceMotion?: 
     };
   }, [hangers, rise, entry, sways, reduceMotion]);
 
-  // Accelerometer → parallax tilt (heavily low-passed for smoothness).
-  useEffect(() => {
-    if (reduceMotion) return;
-    let sx = 0;
-    let sy = 0;
-    let sub: { remove: () => void } | null = null;
-    try {
-      Accelerometer.setUpdateInterval(16);
-      sub = Accelerometer.addListener(({ x, y }) => {
-        sx = sx * 0.9 + clamp(x, -1, 1) * 0.1;
-        sy = sy * 0.9 + clamp(-y, -1, 1) * 0.1;
-        tilt.setValue({ x: sx, y: sy });
-      });
-    } catch {
-      // no sensor — cards hang level
-    }
-    return () => sub?.remove();
-  }, [tilt, reduceMotion]);
-
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">
       {hangers.map((h, i) => {
@@ -173,13 +150,11 @@ export default function HangingCards({ reduceMotion = false }: { reduceMotion?: 
           inputRange: [0, 1],
           outputRange: [h.startTranslate, 0],
         });
-        const px = Animated.multiply(tilt.x, h.depth * PARALLAX);
-        const py = Animated.multiply(tilt.y, h.depth * PARALLAX);
         const d = (h.stringLen + h.cardH) / 2; // pivot-to-top offset for the whole rope
         const outerRot = Animated.add(entry[i], sways[i][0]).interpolate(DEG);
 
         // Build the rope inside-out: card, then wrap in each link (each bends a
-        // little around its own top).
+        // little around its own top). All native-driver.
         let node: React.ReactNode = <LetterCard letter={h.letter} width={h.cardW} height={h.cardH} />;
         for (let s = SEGMENTS - 1; s >= 0; s--) {
           const rot = s === 0 ? outerRot : sways[i][s].interpolate(DEG);
@@ -191,13 +166,7 @@ export default function HangingCards({ reduceMotion = false }: { reduceMotion?: 
                 width: h.cardW,
                 alignItems: 'center',
                 transform: isOuter
-                  ? [
-                      { translateX: px },
-                      { translateY: Animated.add(riseY, py) },
-                      { translateY: -d },
-                      { rotate: rot },
-                      { translateY: d },
-                    ]
+                  ? [{ translateY: riseY }, { translateY: -d }, { rotate: rot }, { translateY: d }]
                   : [{ translateY: -segLen / 2 }, { rotate: rot }, { translateY: segLen / 2 }],
               }}
             >
