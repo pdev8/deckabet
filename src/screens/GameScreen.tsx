@@ -464,6 +464,11 @@ export default function GameScreen({
         }
         dragXY.setValue({ x: gs.dx, y: gs.dy });
       },
+      // Once we're dragging, never hand the touch to a card/slot Pressable the
+      // finger passes over — that termination was springing the card home
+      // mid-drag (scale 1.08 -> 1), which read as flicker/size-change.
+      onPanResponderTerminationRequest: () => false,
+      onShouldBlockNativeResponder: () => true,
       onPanResponderRelease: (_evt, gs) => {
         if (Math.abs(gs.dx) < 6 && Math.abs(gs.dy) < 6) {
           settleDrag(true);
